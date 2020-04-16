@@ -5,32 +5,68 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:calc"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="400" WindowStyle="ToolWindow">
-    <Grid>
+        Title="MainWindow" Height="450" Width="370" WindowStyle="ToolWindow">
+    <Grid Margin=" 2">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="120px"></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
         <!-- Display -->
-        <Border Margin="5px" BorderBrush="Black" BorderThickness="1px">
-            <Grid x:Name="Display" Grid.Row="0" Grid.ColumnSpan="10">
+        <Border Margin="2" BorderBrush="Black" BorderThickness="1px" Grid.Row="0" Grid.ColumnSpan="10">
+            <Grid x:Name="Display">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"></RowDefinition>
                     <RowDefinition Height="3*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBox x:Name="Display_equation" BorderBrush="{x:Null}" FontSize="22" Margin="5px">Equation</TextBox>
-                <TextBox x:Name="Display_result" Grid.Row="1" BorderBrush="{x:Null}" FontSize="28" TextAlignment="Right" Margin="10px">Result</TextBox>
+                <Label x:Name="Display_equation" BorderBrush="{x:Null}" FontSize="22" Margin="5px" Cursor="Arrow" Content="0"/>
+                <Label x:Name="Display_result" HorizontalContentAlignment="Right" Grid.Row="1" BorderBrush="{x:Null}" FontSize="28"  Margin="10px"  Cursor="Arrow" Content=""  />
+
+
             </Grid>
         </Border>
         <!-- Display end -->
-        
+
         <!-- Keyboard -->
-        
+        <Button Margin="2" Grid.Row="1" Grid.Column="0" Content="C"/>
+        <Button Margin="2" Grid.Row="1" Grid.Column="1" Content="DEL"/>
+        <Button Margin="2" Grid.Row="1" Grid.Column="2" Content="+/-"/>
+        <Button Margin="2" Grid.Row="1" Grid.Column="3" Content="÷"/>
+        <Button Margin="2" Grid.Row="1" Grid.Column="4" Content="!x"/>
+
+        <Button Margin="2" Grid.Row="2" Grid.Column="0" Content="7"/>
+        <Button Margin="2" Grid.Row="2" Grid.Column="1" Content="8"/>
+        <Button Margin="2" Grid.Row="2" Grid.Column="2" Content="9"/>
+        <Button Margin="2" Grid.Row="2" Grid.Column="3" Content="×"/>
+        <Button Margin="2" Grid.Row="2" Grid.Column="4" Content="NULL"/>
+
+        <Button Margin="2" Grid.Row="3" Grid.Column="0" Content="4"/>
+        <Button Margin="2" Grid.Row="3" Grid.Column="1" Content="5"/>
+        <Button Margin="2" Grid.Row="3" Grid.Column="2" Content="6"/>
+        <Button Margin="2" Grid.Row="3" Grid.Column="3" Content="+"/>
+        <Button Margin="2" Grid.Row="3" Grid.Column="4" Content="x^y"/>
+
+        <Button Margin="2" Grid.Row="4" Grid.Column="0" Content="4"/>
+        <Button Margin="2" Grid.Row="4" Grid.Column="1" Content="5"/>
+        <Button Margin="2" Grid.Row="4" Grid.Column="2" Content="6"/>
+        <Button Margin="2" Grid.Row="4" Grid.Column="3" Content="-"/>
+        <Button Margin="2" Grid.Row="4" Grid.Column="4" Content="y√x"/>
+
+        <Button Margin="2" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="0"/>
+        <Button Margin="2" Grid.Row="5" Grid.Column="2" Content="."/>
+        <Button Margin="2" Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2" Content="="/>
         <!-- Keyboard end -->
     </Grid>
 </Window>
