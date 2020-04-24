@@ -6,31 +6,26 @@ using System.Threading.Tasks;
 
 namespace calc
 {
-    public abstract class element
+    public abstract class Function
     {
-        protected element prevElement = null;
-        protected element nextElement = null;
+        protected Function prevElement = null;
+        protected Function nextElement = null;
 
-        public enum elType
+        public enum FuncType
         {
-            constant,
-            add,
-            sub,
-            div,
-            mul,
-            fact,
-            pow,
-            sqrt,
-            unset
+            Constant,
+            Unary,
+            Binary,
+            Unset
         }
 
-        protected elType type;
+        protected FuncType type;
 
-        public element()
+        public Function()
         {
         }
 
-        protected void setType(elType type)
+        protected void setType(FuncType type)
         {
             this.type = type;
         }
@@ -38,19 +33,19 @@ namespace calc
 
 
     }
-    public class ConstNum : element
+    public class ConstNum : Function
     {
         double value;
 
         public ConstNum()
         {
             value = 0;
-            type = elType.constant;
+            type = FuncType.Constant;
         }
         public ConstNum(double InitValue)
         {
             value = InitValue;
-            type = elType.constant;
+            type = FuncType.Constant;
         }
 
         public void SetValue(double NewValue)
@@ -64,6 +59,58 @@ namespace calc
         public override string ToString()
         {
             return value.ToString();
+        }
+    }
+    public class UnaryFunction : Function
+    {
+        private FuncName name;
+        double value;
+        double modyfier;
+
+        public enum FuncName
+        {
+            Factorial,
+            Pow,
+            Sqrt
+        }
+        public UnaryFunction()
+        {
+            type = FuncType.Unary;
+        }
+
+        public double GetValue()
+        {
+            switch(name)
+            {
+                case FuncName.Factorial:
+                    {
+                        return 0;
+                    }
+                case FuncName.Pow:
+                    {
+                        return 1;
+                    }
+                case FuncName.Sqrt:
+                    {
+                        return 0;
+                    }
+                default:
+                    throw new Exception("Unrecognized function name");
+            }
+        }
+    }
+    public class BinaryFunction : Function
+    {
+        public enum FuncName
+        {
+            Add,
+            Sub,
+            Div,
+            Mul
+        }
+        public BinaryFunction()
+        {
+            type = FuncType.Binary;
         }
     }
 }
