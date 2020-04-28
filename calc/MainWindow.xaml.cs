@@ -211,11 +211,25 @@ namespace calc
                 }
                 else if (((ConstNum)Active).GetValue() == 0 && ((ConstNum)Active) != Root)
                 {
-                    /*Active = Active.parentFunction;
-                    if (Active.parentFunction.rightFunction.type == Function.FuncType.Constant)
-                        Active.leftFunction.parentFunction = Active.parentFunction.rightFunction;
-                    Active.parentFunction.setRightFunction(Active.leftFunction);
-                    Active = Active.leftFunction;*/
+                    Active = Active.parentFunction;
+                    if(Active.parentFunction==null)
+                    {
+                        Active = Active.leftFunction;
+                        Active.parentFunction = null;
+                        Root = Active;
+                        if(Active.type!=Function.FuncType.Constant || Active.type != Function.FuncType.Unary)
+                            Active = Active.rightFunction;
+                    }
+                    else
+                    {
+                        Active.parentFunction.setRightFunction(Active.leftFunction);
+                        Active.leftFunction.parentFunction = Active.parentFunction;
+                        Active = Active.leftFunction;
+                        while (Active.type != Function.FuncType.Constant && Active.type != Function.FuncType.Unary)
+                        {
+                            Active = Active.rightFunction;
+                        }
+                    }
                 }
             }
             ReloadScreen();
