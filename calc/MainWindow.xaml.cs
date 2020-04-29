@@ -84,19 +84,27 @@ namespace calc
                     Function temp;
                     if (((Button)sender).Content.ToString() == "+")
                     {
-                        temp = new AddFunc(Root, null);
+                        if (Root != Active.parentFunction)
+                        {
+                            temp = new AddFunc(Active.parentFunction, Active.parentFunction.parentFunction);
+                            Active.parentFunction.parentFunction.setLeftFunction(temp);
+                        }
+                        else
+                        {
+                            temp = new AddFunc(Active.parentFunction, null);
+                            Root = temp;
+                        }
                     }
                     else
                     {
                         temp = new SubFunc(Root, null);
                     }
-                    Root.parentFunction = temp;
+                    Active.parentFunction = temp;
                     temp.setRightFunction(new ConstNum(temp));
-                    Root = temp;
                     Last = Active;
                     Active = temp;
                 }
-                else if (((Button)sender).Content.ToString() == "×" || ((Button)sender).Content.ToString() == "÷")
+                else if (((Button)sender).Content.ToString() == "×" || ((Button)sender).Content.ToString() == "÷" || ((Button)sender).Content.ToString() == "%")
                 {
                     Function temp;
                     if (Active.parentFunction != null && (Active.parentFunction.name == Function.FuncName.Mul || Active.parentFunction.name == Function.FuncName.Pow))
@@ -104,6 +112,10 @@ namespace calc
                         if (((Button)sender).Content.ToString() == "×")
                         {
                             temp = new MulFunc(Active.parentFunction, Active.parentFunction.parentFunction);
+                        }
+                        else if(((Button)sender).Content.ToString() == "%")
+                        {
+                            temp = new ModFunc(Active.parentFunction, Active.parentFunction.parentFunction);
                         }
                         else
                         {
@@ -121,6 +133,10 @@ namespace calc
                         if (((Button)sender).Content.ToString() == "×")
                         {
                             temp = new MulFunc(Active, Active.parentFunction);
+                        }
+                        else if (((Button)sender).Content.ToString() == "%")
+                        {
+                            temp = new ModFunc(Active, Active.parentFunction);
                         }
                         else
                         {
@@ -198,10 +214,17 @@ namespace calc
                     {
                         if (value.Length > 1)
                         {
-                            value = value.Remove(value.Length - 1);
-                            if (((ConstNum)Active).point)
-                                ((ConstNum)Active).pointPos--;
-                            ((ConstNum)Active).SetValue(double.Parse(value));
+                            if (value.Length == 2 && value[0] == '-')
+                            {
+                                ((ConstNum)Active).SetValue(0);
+                            }
+                            else
+                            {
+                                value = value.Remove(value.Length - 1);
+                                if (((ConstNum)Active).point)
+                                    ((ConstNum)Active).pointPos--;
+                                ((ConstNum)Active).SetValue(double.Parse(value));
+                            }
                         }
                         else
                         {
@@ -217,7 +240,7 @@ namespace calc
                         Active = Active.leftFunction;
                         Active.parentFunction = null;
                         Root = Active;
-                        if(Active.type!=Function.FuncType.Constant || Active.type != Function.FuncType.Unary)
+                        if(Active.type!=Function.FuncType.Constant && Active.type != Function.FuncType.Unary)
                             Active = Active.rightFunction;
                     }
                     else
@@ -239,12 +262,20 @@ namespace calc
         {
             Root = new ConstNum(null);
             Active = Root;
+            Display_result.Content = "";
             ReloadScreen();
         }
 
         private void SolveButtonClick(object sender, RoutedEventArgs e)
         {
-            Display_result.Content = Root.Solve();
+            try
+            {
+                Display_result.Content = Root.Solve();
+            }
+            catch
+            {
+                Display_result.Content = "Syntax Error!";
+            }
         }
 
         private void InvertButtonClick(object sender, RoutedEventArgs e)
