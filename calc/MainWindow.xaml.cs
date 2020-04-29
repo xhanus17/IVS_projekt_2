@@ -212,12 +212,19 @@ namespace calc
                     }
                     else
                     {
-                        if (value.Length > 1 && value[0]!='-')
+                        if (value.Length > 1)
                         {
-                            value = value.Remove(value.Length - 1);
-                            if (((ConstNum)Active).point)
-                                ((ConstNum)Active).pointPos--;
-                            ((ConstNum)Active).SetValue(double.Parse(value));
+                            if (value.Length == 2 && value[0] == '-')
+                            {
+                                ((ConstNum)Active).SetValue(0);
+                            }
+                            else
+                            {
+                                value = value.Remove(value.Length - 1);
+                                if (((ConstNum)Active).point)
+                                    ((ConstNum)Active).pointPos--;
+                                ((ConstNum)Active).SetValue(double.Parse(value));
+                            }
                         }
                         else
                         {
@@ -255,6 +262,7 @@ namespace calc
         {
             Root = new ConstNum(null);
             Active = Root;
+            Display_result.Content = "";
             ReloadScreen();
         }
 
