@@ -84,7 +84,7 @@ namespace calc
                     Function temp;
                     if (((Button)sender).Content.ToString() == "+")
                     {
-                        temp = new SubFunc(Root, null);
+                        temp = new AddFunc(Root, null);
                     }
                     else
                     {
