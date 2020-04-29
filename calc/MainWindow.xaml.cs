@@ -249,17 +249,27 @@ namespace calc
 
         private void InvertButtonClick(object sender, RoutedEventArgs e)
         {
-            if (Active.GetType() == typeof(ConstNum))
+            if (Active.GetType() == typeof(ConstNum) || Active.GetType() == typeof(FactorialFunc))
             {
                 if (Active.parentFunction != null && Active.parentFunction.name == Function.FuncName.Add)
                 {
-                    SubFunc temp = new SubFunc(Active.leftFunction, Active.parentFunction);
-                    Active.parentFunction.setRightFunction(temp);
+                    SubFunc temp = new SubFunc(Active.parentFunction.leftFunction, Active.parentFunction.parentFunction);
+                    temp.setRightFunction(Active);
+                    if (Active.parentFunction.parentFunction != null)
+                        Active.parentFunction.parentFunction.setRightFunction(temp);
+                    else
+                        Root = temp;
+                    Active.parentFunction = temp;
                 }
                 else if (Active.parentFunction != null && Active.parentFunction.name == Function.FuncName.Sub)
                 {
-                    AddFunc temp = new AddFunc(Active.leftFunction, Active.parentFunction);
-                    Active.parentFunction.setRightFunction(temp);
+                    AddFunc temp = new AddFunc(Active.parentFunction.leftFunction, Active.parentFunction.parentFunction);
+                    temp.setRightFunction(Active);
+                    if (Active.parentFunction.parentFunction != null)
+                        Active.parentFunction.parentFunction.setRightFunction(temp);
+                    else
+                        Root = temp;
+                    Active.parentFunction = temp;
                 }
                 else
                 {
