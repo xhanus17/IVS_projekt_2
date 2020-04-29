@@ -18,12 +18,12 @@ namespace MathNS
         }
         public static bool TryDiv(double cis1, double cis2, out double vysledek)
         {
-            try
-            {
+            if (cis2 != 0) 
+            { 
                 vysledek = Div(cis1, cis2);
                 return true;
             }
-            catch
+            else
             {
                 vysledek = 0;
                 return false;
@@ -56,6 +56,10 @@ namespace MathNS
                 num *= -1;
             }
             return num;
+        }
+        public static double Mod(double cis1, double cis2)
+        {
+            return cis1 % cis2;
         }
     }
 }

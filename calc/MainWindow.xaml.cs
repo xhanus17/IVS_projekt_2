@@ -84,19 +84,27 @@ namespace calc
                     Function temp;
                     if (((Button)sender).Content.ToString() == "+")
                     {
-                        temp = new AddFunc(Root, null);
+                        if (Root != Active.parentFunction)
+                        {
+                            temp = new AddFunc(Active.parentFunction, Active.parentFunction.parentFunction);
+                            Active.parentFunction.parentFunction.setLeftFunction(temp);
+                        }
+                        else
+                        {
+                            temp = new AddFunc(Active.parentFunction, null);
+                            Root = temp;
+                        }
                     }
                     else
                     {
                         temp = new SubFunc(Root, null);
                     }
-                    Root.parentFunction = temp;
+                    Active.parentFunction = temp;
                     temp.setRightFunction(new ConstNum(temp));
-                    Root = temp;
                     Last = Active;
                     Active = temp;
                 }
-                else if (((Button)sender).Content.ToString() == "×" || ((Button)sender).Content.ToString() == "÷")
+                else if (((Button)sender).Content.ToString() == "×" || ((Button)sender).Content.ToString() == "÷" || ((Button)sender).Content.ToString() == "%")
                 {
                     Function temp;
                     if (Active.parentFunction != null && (Active.parentFunction.name == Function.FuncName.Mul || Active.parentFunction.name == Function.FuncName.Pow))
@@ -104,6 +112,10 @@ namespace calc
                         if (((Button)sender).Content.ToString() == "×")
                         {
                             temp = new MulFunc(Active.parentFunction, Active.parentFunction.parentFunction);
+                        }
+                        else if(((Button)sender).Content.ToString() == "%")
+                        {
+                            temp = new ModFunc(Active.parentFunction, Active.parentFunction.parentFunction);
                         }
                         else
                         {
@@ -121,6 +133,10 @@ namespace calc
                         if (((Button)sender).Content.ToString() == "×")
                         {
                             temp = new MulFunc(Active, Active.parentFunction);
+                        }
+                        else if (((Button)sender).Content.ToString() == "%")
+                        {
+                            temp = new ModFunc(Active, Active.parentFunction);
                         }
                         else
                         {
@@ -196,7 +212,7 @@ namespace calc
                     }
                     else
                     {
-                        if (value.Length > 1)
+                        if (value.Length > 1 && value[0]!='-')
                         {
                             value = value.Remove(value.Length - 1);
                             if (((ConstNum)Active).point)
@@ -217,7 +233,7 @@ namespace calc
                         Active = Active.leftFunction;
                         Active.parentFunction = null;
                         Root = Active;
-                        if(Active.type!=Function.FuncType.Constant || Active.type != Function.FuncType.Unary)
+                        if(Active.type!=Function.FuncType.Constant && Active.type != Function.FuncType.Unary)
                             Active = Active.rightFunction;
                     }
                     else
@@ -244,7 +260,14 @@ namespace calc
 
         private void SolveButtonClick(object sender, RoutedEventArgs e)
         {
-            Display_result.Content = Root.Solve();
+            try
+            {
+                Display_result.Content = Root.Solve();
+            }
+            catch
+            {
+                Display_result.Content = "Syntax Error!";
+            }
         }
 
         private void InvertButtonClick(object sender, RoutedEventArgs e)
@@ -253,13 +276,23 @@ namespace calc
             {
                 if (Active.parentFunction != null && Active.parentFunction.name == Function.FuncName.Add)
                 {
-                    SubFunc temp = new SubFunc(Active.leftFunction, Active.parentFunction);
-                    Active.parentFunction.setRightFunction(temp);
+                    SubFunc temp = new SubFunc(Active.parentFunction.leftFunction, Active.parentFunction.parentFunction);
+                    temp.setRightFunction(Active);
+                    if (Active.parentFunction.parentFunction != null)
+                        Active.parentFunction.parentFunction.setRightFunction(temp);
+                    else
+                        Root = temp;
+                    Active.parentFunction = temp;
                 }
                 else if (Active.parentFunction != null && Active.parentFunction.name == Function.FuncName.Sub)
                 {
-                    AddFunc temp = new AddFunc(Active.leftFunction, Active.parentFunction);
-                    Active.parentFunction.setRightFunction(temp);
+                    AddFunc temp = new AddFunc(Active.parentFunction.leftFunction, Active.parentFunction.parentFunction);
+                    temp.setRightFunction(Active);
+                    if (Active.parentFunction.parentFunction != null)
+                        Active.parentFunction.parentFunction.setRightFunction(temp);
+                    else
+                        Root = temp;
+                    Active.parentFunction = temp;
                 }
                 else
                 {

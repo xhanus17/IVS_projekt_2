@@ -23,7 +23,8 @@ namespace calc
             Add,
             Div,
             Sub,
-            Mul
+            Mul,
+            Mod
         }
 
         public enum FuncType
@@ -149,23 +150,7 @@ namespace calc
 
         public double GetValue()
         {
-            switch (name)
-            {
-                case FuncName.Factorial:
-                    {
-                        return CalcMath.Factorial((int)value); ;
-                    }
-                case FuncName.Pow:
-                    {
-                        return CalcMath.Pow(value, modifier);
-                    }
-                case FuncName.Sqrt:
-                    {
-                        return CalcMath.Sqrt(value, modifier);
-                    }
-                default:
-                    throw new Exception("Unrecognized function name");
-            }
+            return value;
         }
 
         public override string ToString()
@@ -202,6 +187,7 @@ namespace calc
         public FactorialFunc(double value, Function parentFunction)
         {
             name = FuncName.Factorial;
+            type = FuncType.Unary;
             this.value = value;
             this.parentFunction = parentFunction;
         }
@@ -243,7 +229,12 @@ namespace calc
         }
         public override double Solve()
         {
-            return CalcMath.Sqrt(leftFunction.Solve(), rightFunction.Solve());
+            double right = rightFunction.Solve();
+            double left = leftFunction.Solve();
+            if (right >= 0)
+                return CalcMath.Sqrt(left, right);
+            else
+                throw new ArgumentException();
         }
     }
     public class AddFunc : Function
@@ -261,7 +252,7 @@ namespace calc
         }
         public override double Solve()
         {
-            return leftFunction.Solve() + rightFunction.Solve();
+            return CalcMath.Sum(leftFunction.Solve(),rightFunction.Solve());
         }
     }
     public class SubFunc : Function
@@ -279,7 +270,7 @@ namespace calc
         }
         public override double Solve()
         {
-            return leftFunction.Solve() - rightFunction.Solve();
+            return CalcMath.Sub(leftFunction.Solve(),rightFunction.Solve());
         }
     }
     public class DivFunc : Function
@@ -297,7 +288,13 @@ namespace calc
         }
         public override double Solve()
         {
-            return leftFunction.Solve() / rightFunction.Solve();
+            double res = 0;
+            if (!CalcMath.TryDiv(leftFunction.Solve(), rightFunction.Solve(),out res))
+            {
+                throw new DivideByZeroException();
+            }
+            else
+                return res; 
         }
     }
     public class MulFunc : Function
@@ -315,7 +312,28 @@ namespace calc
         }
         public override double Solve()
         {
-            return leftFunction.Solve()*rightFunction.Solve();
+            return CalcMath.Mul(leftFunction.Solve(), rightFunction.Solve());
+        }
+    }
+    public class ModFunc : Function
+    {
+        public ModFunc(Function LeftFunction, Function parentFunction)
+        {
+            name = FuncName.Mod;
+            type = FuncType.Binary;
+            this.leftFunction = LeftFunction;
+            this.parentFunction = parentFunction;
+        }
+        public override string ToString()
+        {
+            return leftFunction.ToString() + "%" + rightFunction.ToString();
+        }
+        public override double Solve()
+        {
+            if (rightFunction.Solve() != 0)
+                return CalcMath.Mod(leftFunction.Solve(), rightFunction.Solve());
+            else
+                throw new DivideByZeroException();
         }
     }
 }
