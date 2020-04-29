@@ -84,16 +84,7 @@ namespace calc
                     Function temp;
                     if (((Button)sender).Content.ToString() == "+")
                     {
-                        if (Root != Active.parentFunction)
-                        {
-                            temp = new AddFunc(Active.parentFunction, Active.parentFunction.parentFunction);
-                            Active.parentFunction.parentFunction.setLeftFunction(temp);
-                        }
-                        else
-                        {
-                            temp = new AddFunc(Active.parentFunction, null);
-                            Root = temp;
-                        }
+                        temp = new SubFunc(Root, null);
                     }
                     else
                     {
@@ -102,7 +93,9 @@ namespace calc
                     Active.parentFunction = temp;
                     temp.setRightFunction(new ConstNum(temp));
                     Last = Active;
-                    Active = temp;
+                    Active = temp.rightFunction;
+                    Root = temp;
+
                 }
                 else if (((Button)sender).Content.ToString() == "×" || ((Button)sender).Content.ToString() == "÷" || ((Button)sender).Content.ToString() == "%")
                 {
