@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,6 +48,14 @@ namespace MathNS
                 num_base *= i;
             }
             return num_base;
+        }
+        public static double Abs(int num)
+        {
+            if (num < 0)
+            {
+                num *= -1;
+            }
+            return num;
         }
     }
 }
