@@ -35,9 +35,13 @@ namespace MathNS
         }
         public static double Sqrt(double cis1,double cis2) {//Odmocnina 2
             double val = 0;
-            if (TryDiv(1, cis1, out val))
+            if (TryDiv(1.0, cis1, out val))
             {
-                return Math.Pow(cis2, val);
+                if (cis2 >= 0)
+                    return Math.Pow(cis2, val);
+                else if (cis2 < 0 && cis1 % 2 == 1)
+                    return -1 * Math.Pow(-cis2, val);
+                else throw new ArgumentException();
             }
             else return 0;
         }

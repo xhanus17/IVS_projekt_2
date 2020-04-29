@@ -231,7 +231,7 @@ namespace calc
         {
             double right = rightFunction.Solve();
             double left = leftFunction.Solve();
-            if (right >= 0)
+            if (right >= 0 || CalcMath.Mod(left,2)==1)
                 return CalcMath.Sqrt(left, right);
             else
                 throw new ArgumentException();
