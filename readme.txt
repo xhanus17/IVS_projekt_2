@@ -7,7 +7,7 @@ Autori
 ------
 
 Team Pala Habery
-- xhanu17 Jan Hanus 
+- xhanus17 Jan Hanus 
 - xjulis00 Adam Julis
 - xkruba00 David Kruba 
 - xzedni15 Matej Zednik 
