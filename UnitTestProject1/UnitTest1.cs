@@ -39,7 +39,6 @@ namespace UnitTestProject1
             Assert.AreEqual(1, CalcMath.Div(5, 5));
             Assert.AreEqual(0.6, CalcMath.Div(3, 5));
             Assert.AreEqual(4.5, CalcMath.Div(9, 2));
-            Assert.AreEqual(0, CalcMath.Div(78.48458, 0));
             Assert.AreEqual(0, CalcMath.Div(0, 554.72));
         }
 
