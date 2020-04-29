@@ -20,9 +20,255 @@ namespace calc
     /// </summary>
     public partial class MainWindow : Window
     {
+        Function Root;
+        Function Active;
+        Function Last;
         public MainWindow()
         {
             InitializeComponent();
+            Root = new ConstNum(null);
+            Active = Root;
+            ReloadScreen();
+        }
+
+        private void NumKeyPress(object sender, RoutedEventArgs e)
+        {
+            double value = 0;
+            if (double.TryParse(((Button)sender).Content.ToString(), out value))
+            {
+                if (Active.GetType() == typeof(ConstNum))
+                {
+                    if (((ConstNum)Active).point && ((ConstNum)Active).ToString().Remove(((ConstNum)Active).ToString().IndexOf(',')).Length + ((ConstNum)Active).pointPos < 15)
+                    {
+                        string text = ((ConstNum)Active).ToString();
+                        text += value;
+                        ((ConstNum)Active).SetValue(double.Parse(text));
+                        ((ConstNum)Active).pointPos++;
+                    }
+                    else if (!((ConstNum)Active).point)
+                    {
+                        value += ((ConstNum)Active).GetValue() * 10;
+                        ((ConstNum)Active).SetValue(value);
+                    }
+                }
+                else
+                {
+                    Active.setRightFunction(new ConstNum(value, Active));
+                    Active = Active.getRightFunction();
+                }
+                ReloadScreen();
+            }
+        }
+
+        private void ReloadScreen()
+        {
+            Display_equation.Content = Root.ToString();
+        }
+
+        private void pointButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (Active.GetType() == typeof(ConstNum) && !((ConstNum)Active).point)
+            {
+                ((ConstNum)Active).point = true;
+                ReloadScreen();
+            }
+        }
+
+        private void FunctionButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (Active.type == Function.FuncType.Constant || Active.type == Function.FuncType.Unary)
+            {
+                Last = Active;
+                if (((Button)sender).Content.ToString() == "+" || ((Button)sender).Content.ToString() == "-")
+                {
+                    Function temp;
+                    if (((Button)sender).Content.ToString() == "+")
+                    {
+                        temp = new AddFunc(Root, null);
+                    }
+                    else
+                    {
+                        temp = new SubFunc(Root, null);
+                    }
+                    Root.parentFunction = temp;
+                    temp.setRightFunction(new ConstNum(temp));
+                    Root = temp;
+                    Last = Active;
+                    Active = temp;
+                }
+                else if (((Button)sender).Content.ToString() == "×" || ((Button)sender).Content.ToString() == "÷")
+                {
+                    Function temp;
+                    if (Active.parentFunction != null && (Active.parentFunction.name == Function.FuncName.Mul || Active.parentFunction.name == Function.FuncName.Pow))
+                    {
+                        if (((Button)sender).Content.ToString() == "×")
+                        {
+                            temp = new MulFunc(Active.parentFunction, Active.parentFunction.parentFunction);
+                        }
+                        else
+                        {
+                            temp = new DivFunc(Active.parentFunction, Active.parentFunction.parentFunction);
+                        }
+
+                        if (Active.parentFunction.parentFunction == null)
+                            Root = temp;
+                        else Active.parentFunction.parentFunction.setRightFunction(temp);
+
+                        Active.parentFunction = temp;
+                    }
+                    else
+                    {
+                        if (((Button)sender).Content.ToString() == "×")
+                        {
+                            temp = new MulFunc(Active, Active.parentFunction);
+                        }
+                        else
+                        {
+                            temp = new DivFunc(Active, Active.parentFunction);
+                        }
+
+                        if (Active.parentFunction != null)
+                            Active.parentFunction.setRightFunction(temp);
+                        else
+                            Root = temp;
+
+                    }
+                    temp.setRightFunction(new ConstNum(temp));
+                    Active = temp.rightFunction;
+                }
+                else if (((Button)sender).Content.ToString() == "y√x" || ((Button)sender).Content.ToString() == "x^y")
+                {
+                    Function temp;
+                    if (((Button)sender).Content.ToString() == "y√x")
+                    {
+                        temp = new SqrtFunc(Active, Active.parentFunction);
+                    }
+                    else
+                    {
+                        temp = new PowFunc(Active, Active.parentFunction);
+                    }
+                    if (Active.parentFunction != null)
+                        Active.parentFunction.setRightFunction(temp);
+                    else
+                        Root = temp;
+
+                    temp.setRightFunction(new ConstNum(temp));
+                    Active = temp.rightFunction;
+                }
+                else if (((Button)sender).Content.ToString() == "!x" && Active.type == Function.FuncType.Constant)
+                {
+                    Function temp = new FactorialFunc(((ConstNum)Active).GetValue(), Active.parentFunction);
+                    if (Active.parentFunction != null && Active.parentFunction.leftFunction == Active)
+                    {
+                        Active.parentFunction.setLeftFunction(temp);
+                    }
+                    else if (Active.parentFunction != null && Active.parentFunction.rightFunction == Active)
+                    {
+                        Active.parentFunction.setRightFunction(temp);
+                    }
+                    else
+                    {
+                        Root = temp;
+                    }
+                    Active = temp;
+                }
+            }
+            ReloadScreen();
+        }
+
+        private void DELButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (Active.GetType() == typeof(ConstNum))
+            {
+                if (((ConstNum)Active).GetValue() != 0 || ((ConstNum)Active).point)
+                {
+                    string value = ((ConstNum)Active).ToString();
+                    if (((ConstNum)Active).point && ((ConstNum)Active).pointPos == 0)
+                    {
+                        if (value.IndexOf(',') > 0)
+                        {
+                            value = value.Remove(value.IndexOf(','));
+                            ((ConstNum)Active).SetValue(double.Parse(value));
+                        }
+
+                        ((ConstNum)Active).point = false;
+                        ((ConstNum)Active).pointPos = 0;
+                    }
+                    else
+                    {
+                        if (value.Length > 1)
+                        {
+                            value = value.Remove(value.Length - 1);
+                            if (((ConstNum)Active).point)
+                                ((ConstNum)Active).pointPos--;
+                            ((ConstNum)Active).SetValue(double.Parse(value));
+                        }
+                        else
+                        {
+                            ((ConstNum)Active).SetValue(0);
+                        }
+                    }
+                }
+                else if (((ConstNum)Active).GetValue() == 0 && ((ConstNum)Active) != Root)
+                {
+                    Active = Active.parentFunction;
+                    if(Active.parentFunction==null)
+                    {
+                        Active = Active.leftFunction;
+                        Active.parentFunction = null;
+                        Root = Active;
+                        if(Active.type!=Function.FuncType.Constant || Active.type != Function.FuncType.Unary)
+                            Active = Active.rightFunction;
+                    }
+                    else
+                    {
+                        Active.parentFunction.setRightFunction(Active.leftFunction);
+                        Active.leftFunction.parentFunction = Active.parentFunction;
+                        Active = Active.leftFunction;
+                        while (Active.type != Function.FuncType.Constant && Active.type != Function.FuncType.Unary)
+                        {
+                            Active = Active.rightFunction;
+                        }
+                    }
+                }
+            }
+            ReloadScreen();
+        }
+
+        private void ClearButtonClick(object sender, RoutedEventArgs e)
+        {
+            Root = new ConstNum(null);
+            Active = Root;
+            ReloadScreen();
+        }
+
+        private void SolveButtonClick(object sender, RoutedEventArgs e)
+        {
+            Display_result.Content = Root.Solve();
+        }
+
+        private void InvertButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (Active.GetType() == typeof(ConstNum))
+            {
+                if (Active.parentFunction != null && Active.parentFunction.name == Function.FuncName.Add)
+                {
+                    SubFunc temp = new SubFunc(Active.leftFunction, Active.parentFunction);
+                    Active.parentFunction.setRightFunction(temp);
+                }
+                else if (Active.parentFunction != null && Active.parentFunction.name == Function.FuncName.Sub)
+                {
+                    AddFunc temp = new AddFunc(Active.leftFunction, Active.parentFunction);
+                    Active.parentFunction.setRightFunction(temp);
+                }
+                else
+                {
+                    ((ConstNum)Active).SetValue(((ConstNum)Active).GetValue() * -1);
+                }
+            }
+            ReloadScreen();
         }
     }
+
+
 }
