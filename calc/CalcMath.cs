@@ -53,7 +53,7 @@ namespace MathNS
             }
             return num_base;
         }
-        public static double Abs(int num)
+        public static double Abs(double num)
         {
             if (num < 0)
             {

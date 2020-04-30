@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathNS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,11 @@ namespace calc
             Active = Root;
             ReloadScreen();
         }
-
+        /// <summary>
+        ///     Funkce se zavolá po stisku tlačítka s číslem, po zavolání přidá na aktuální číslo číslici z tlačítka, pokud není číslo moc velké
+        /// </summary>
+        /// <param name="sender">stisknuté tlačítko</param>
+        /// <param name="e"></param>
         private void NumKeyPress(object sender, RoutedEventArgs e)
         {
             double value = 0;
@@ -59,12 +64,18 @@ namespace calc
                 ReloadScreen();
             }
         }
-
+        /// <summary>
+        ///     Po zavolání se vypíše příklad na display
+        /// </summary>
         private void ReloadScreen()
         {
             Display_equation.Content = Root.ToString();
         }
-
+        /// <summary>
+        ///     pokud aktuální číslo nemá desetinnou čárku, tak jí tato funkce přidá
+        /// </summary>
+        /// <param name="sender">Stisknuté tlačítko</param>
+        /// <param name="e"></param>
         private void pointButtonClick(object sender, RoutedEventArgs e)
         {
             if (Active.GetType() == typeof(ConstNum) && !((ConstNum)Active).point)
@@ -73,7 +84,11 @@ namespace calc
                 ReloadScreen();
             }
         }
-
+        /// <summary>
+        ///     Po zavolání přidá za aktuální číslo funkci z tlačítka a vytvoří a aktivuje nové číslo za funkcí
+        /// </summary>
+        /// <param name="sender">stisknuté tlačítko</param>
+        /// <param name="e"></param>
         private void FunctionButtonClick(object sender, RoutedEventArgs e)
         {
             if (Active.type == Function.FuncType.Constant || Active.type == Function.FuncType.Unary)
@@ -90,7 +105,7 @@ namespace calc
                     {
                         temp = new SubFunc(Root, null);
                     }
-                    Active.parentFunction = temp;
+                    Root.parentFunction = temp;
                     temp.setRightFunction(new ConstNum(temp));
                     Last = Active;
                     Active = temp.rightFunction;
@@ -166,7 +181,7 @@ namespace calc
                 }
                 else if (((Button)sender).Content.ToString() == "!x" && Active.type == Function.FuncType.Constant)
                 {
-                    Function temp = new FactorialFunc(((ConstNum)Active).GetValue(), Active.parentFunction);
+                    Function temp = new FactorialFunc(CalcMath.Abs(Math.Round(((ConstNum)Active).GetValue())), Active.parentFunction);
                     if (Active.parentFunction != null && Active.parentFunction.leftFunction == Active)
                     {
                         Active.parentFunction.setLeftFunction(temp);
@@ -184,7 +199,11 @@ namespace calc
             }
             ReloadScreen();
         }
-
+        /// <summary>
+        ///     Po stisknutí příslušného tlačítka odstraní poslední číslici aktuálního čísla, pokud je číslo při zavolání 0, odstraní poslední funkci
+        /// </summary>
+        /// <param name="sender">stisknuté tlačítko</param>
+        /// <param name="e"></param>
         private void DELButtonClick(object sender, RoutedEventArgs e)
         {
             if (Active.GetType() == typeof(ConstNum))
@@ -250,7 +269,11 @@ namespace calc
             }
             ReloadScreen();
         }
-
+        /// <summary>
+        ///     Odstraní celý příklad, vytvoří nový a nechá přepsat display
+        /// </summary>
+        /// <param name="sender">stisknuté tlačítko</param>
+        /// <param name="e"></param>
         private void ClearButtonClick(object sender, RoutedEventArgs e)
         {
             Root = new ConstNum(null);
@@ -258,7 +281,11 @@ namespace calc
             Display_result.Content = "";
             ReloadScreen();
         }
-
+        /// <summary>
+        ///     Vyžádá si od kořenové funkce hodnotu, která se získá stromově ze všech ostatních funkcí a výslednou hodnotu vypíše na display
+        /// </summary>
+        /// <param name="sender">stisknuté tlačítko</param>
+        /// <param name="e"></param>
         private void SolveButtonClick(object sender, RoutedEventArgs e)
         {
             try
@@ -270,10 +297,14 @@ namespace calc
                 Display_result.Content = "Syntax Error!";
             }
         }
-
+        /// <summary>
+        ///     Neguje hodnotu aktuálního čísla, pokud číslo náleží funkci + nebo -, tak neneeguje číslo ale samotnou funkci
+        /// </summary>
+        /// <param name="sender">stisknuté tlačítko</param>
+        /// <param name="e"></param>
         private void InvertButtonClick(object sender, RoutedEventArgs e)
         {
-            if (Active.GetType() == typeof(ConstNum) || Active.GetType() == typeof(FactorialFunc))
+            if (Active.GetType() == typeof(ConstNum))
             {
                 if (Active.parentFunction != null && Active.parentFunction.name == Function.FuncName.Add)
                 {
