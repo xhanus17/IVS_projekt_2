@@ -1,4 +1,4 @@
 xhanus17 100 (GUI,Logika kalkulačky)
-xjulis00 
-xkruba00  
-xzedni15  
+xjulis00 100 (Dokumentace, instalátor)
+xkruba00 100 (Matematická knihovna)
+xzedni15 100 (Testy, mockupy, makefile, screen debugu)
