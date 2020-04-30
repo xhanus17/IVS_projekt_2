@@ -1,4 +1,3 @@
-xhanus17 100 (GUI,Logika kalkulačky)
-xjulis00 100 (Dokumentace, instalátor)
-xkruba00 100 (Matematická knihovna)
-xzedni15 100 (Testy, mockupy, makefile, screen debugu)
+xhanus17 140 (GUI,Logika kalkulačky, matematická knihovna)
+xjulis00 130 (Dokumentace, instalátor, matematická knihovna)
+xzedni15 130 (Testy, mockupy, makefile, screen debugu, matematická knihovna)
